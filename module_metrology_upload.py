@@ -23,7 +23,7 @@ MAX_SHIELD_HEIGHT = 5710 #um (Endcap)
 # Do not modify.
 X_LIMIT = 100 #um
 Y_LIMIT = 300 #um
-PATH_TO_DATA = 'module_metrology_data/'
+PATH_TO_DATA = 'module_metrology_data/metrology_data/'
 PATH_TO_POSITION_FILES = 'metrology_position_files/'
 PROGRAM_VERSION = 'v1'
 GLUE_RANGE = (80, 160) #um
@@ -221,7 +221,7 @@ def get_file_data():
     cap_height_box.configure(state=DISABLED)
     shield_height_box.configure(state=DISABLED)
 
-    file = filedialog.askopenfilename(title = 'Select Data File')
+    file = filedialog.askopenfilename(initialdir = PATH_TO_DATA, title = 'Select Data File')
     
     # Get the data from the file
     with open(file) as data_file:

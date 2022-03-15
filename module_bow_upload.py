@@ -17,8 +17,7 @@ INSTRUMENT = "Mitutoyo_CMM"
 SITE_TYPE = 'EC'
 
 # Program Constants - Do not modify 
-PATH_TO_DATA = 'module_metrology_data/'
-PATH_TO_POSITION_FILES = 'metrology_position_files/'
+PATH_TO_DATA = 'module_metrology_data/bow_data/'
 PROGRAM_VERSION = 'v1'
 BOW_RANGE = (-50, 150) #um
 X = 0
@@ -145,7 +144,7 @@ def get_file_data():
     operator_box.configure(state=DISABLED)
     bow_box.configure(state=DISABLED)
 
-    file = filedialog.askopenfilename(title = 'Select Data File')
+    file = filedialog.askopenfilename(initialdir = PATH_TO_DATA, title = 'Select Data File')
     
     # Get the data from the file
     with open(file) as data_file:
