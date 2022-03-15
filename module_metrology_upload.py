@@ -20,6 +20,7 @@ HYBRID_FLEX_THICKNESS = 270 #um (Endcap)
 PB_FLEX_THICKNESS = 270 #um (Endcap)
 MAX_SHIELD_HEIGHT = 5710 #um (Endcap)
 
+# Do not modify.
 X_LIMIT = 100 #um
 Y_LIMIT = 300 #um
 PATH_TO_DATA = 'module_metrology_data/'
