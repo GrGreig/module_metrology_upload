@@ -47,7 +47,7 @@ def read_cmm_file(filename):
 def get_date(filename):
     """Gets the date of a file in ISO8601 format"""
     creation_time = os.path.getctime(filename) 
-    creation_time = datetime.fromtimestamp(creation_time)
+    creation_time = datetime.utcfromtimestamp(creation_time)
     return creation_time.strftime('%Y-%m-%dT%H:%M:%S.%f%ZZ')
 
 def tilt_correction(data_dictionary):
