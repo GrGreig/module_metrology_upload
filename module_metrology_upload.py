@@ -94,12 +94,12 @@ def get_metrology_results(lines):
             temp_list.append([float(x),float(y),float(z)])
             raw_data_dict[name] = temp_list
     data_dict = mm.tilt_correction(raw_data_dict)
-
+    print(data_dict)
     #Get rest of results
     cap_dict = dict()
     hybrid_gt_dict = dict()
     pb_gt_dict = dict()
-    shield_height = "null"
+    shield_height = None
     for key, values in data_dict.items() :
         z_values = [row[Z] for row in values]
         if re.search(CAP_REGEX, key) :
@@ -112,22 +112,23 @@ def get_metrology_results(lines):
             shield_height = round(max(z_values)*1000)
 
     if not cap_dict :
-        results["CAP_HEIGHT"] = "null"
+        results["CAP_HEIGHT"] = None
     else :
         results["CAP_HEIGHT"] = cap_dict
-    results["SHIELDBOX_HEIGHT"] = shield_height
     if not pb_dict :
-        results["PB_POSITION"] = "null"
+        results["PB_POSITION"] = None
     else :
         results["PB_POSITION"] = pb_dict
-    results["HYBRID_POSITION"] = hybrid_dict
-    results["HYBRID_GLUE_THICKNESS"] = hybrid_gt_dict
     if not pb_gt_dict :
-        results["PB_GLUE_THICKNESS"] = "null"
+        results["PB_GLUE_THICKNESS"] = None
     else :
         results["PB_GLUE_THICKNESS"] = pb_gt_dict
+    results["HYBRID_POSITION"] = hybrid_dict
+    results["HYBRID_GLUE_THICKNESS"] = hybrid_gt_dict
+    results["SHIELDBOX_HEIGHT"] = shield_height
     results["FILE"] = ""
-
+    print()
+    print(results)
     return results
 
 def test_passed():
@@ -140,7 +141,7 @@ def test_passed():
     for point in DATA_DICT['results']['HYBRID_POSITION'].values():
         x_positions.append(point[X])
         y_positions.append(point[Y])
-    if DATA_DICT['results']['PB_POSITION'] != 'null':
+    if DATA_DICT['results']['PB_POSITION'] is not None :
         for point in DATA_DICT['results']['PB_POSITION'].values():
             x_positions.append(point[X])
             y_positions.append(point[Y])
@@ -160,7 +161,7 @@ def test_passed():
         output += "Failure - Hybrid glue thickness exceeds tolerance.\n"
     
     # Then the powerboard
-    if DATA_DICT['results']['PB_GLUE_THICKNESS'] != 'null':
+    if DATA_DICT['results']['PB_GLUE_THICKNESS'] is not None :
         pb_gts = []
         for height in DATA_DICT['results']['PB_GLUE_THICKNESS'].values():
             pb_gts.append(height)
@@ -171,7 +172,7 @@ def test_passed():
         pb_gt_check = True
 
     # Check the shieldbox height
-    if DATA_DICT['results']['SHIELDBOX_HEIGHT'] != 'null':
+    if DATA_DICT['results']['SHIELDBOX_HEIGHT'] is not None:
         shield_check = DATA_DICT['results']['SHIELDBOX_HEIGHT'] < MAX_SHIELD_HEIGHT
         if not shield_check:
             output += "Failure - Sheild is too high.\n"
@@ -263,7 +264,10 @@ def get_file_data():
     hybrid_gt_box.insert('1.0', print_format(DATA_DICT["results"]["HYBRID_GLUE_THICKNESS"]))
     pb_gt_box.insert('1.0', print_format(DATA_DICT["results"]["PB_GLUE_THICKNESS"]))
     cap_height_box.insert('1.0', print_format(DATA_DICT["results"]["CAP_HEIGHT"]))
-    shield_height_box.insert('1.0', DATA_DICT["results"]["SHIELDBOX_HEIGHT"])
+    if DATA_DICT["results"]["SHIELDBOX_HEIGHT"] is not None :
+        shield_height_box.insert('1.0', DATA_DICT["results"]["SHIELDBOX_HEIGHT"])
+    else : 
+        shield_height_box.insert('1.0', 'None')
 
     id_box.configure(state=DISABLED)
     run_num_box.configure(state=DISABLED)
