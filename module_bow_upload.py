@@ -12,8 +12,8 @@ from tkinter.constants import DISABLED, NORMAL
 from tkinter import END
 
 # Institute Specific Constants - MODIFY THESE!
-INSTITUTE = 'TRIUMF'
-INSTRUMENT = "Mitutoyo_CMM"
+INSTITUTE = 'SFU'
+INSTRUMENT = "Smartscope Flash 302"
 SITE_TYPE = 'EC'
 
 # Program Constants - Do not modify 
@@ -209,7 +209,7 @@ def save_data():
     result= client.post("uploadTestRunResults", json = DATA_DICT)
 
     if (('uuAppErrorMap')=={}):
-        output_text.set('Upload of Test and File Succesful!')
+        output_text.set('Upload of Test and File Successful!')
     elif (('uuAppErrorMap'))[0]=='cern-itkpd-main/uploadTestRunResults/':
         output_text.set("Error in Test Upload.")
     elif list(('uuAppErrorMap'))[0]=='cern-itkpd-main/uploadTestRunResults/componentAtDifferentLocation':
@@ -217,7 +217,7 @@ def save_data():
     elif (('uuAppErrorMap'))[0]=='cern-itkpd-main/uploadTestRunResults/unassociatedStageWithTestType':
         output_text.set('Component cannot be uploaded as the current stage does not have this test type. You will need to update the stage of the component on the ITK DB. Note that due to a bug on the ITK DB, you might also get this error if the component is not at your current location.')
     elif (('uuAppErrorMap'))[0]!='cern-itkpd-main/uploadTestRunResults/':
-        output_text.set("Upload of Test Succesful!")
+        output_text.set("Upload of Test Successful!")
     else:
         output_text.set('Error!')
             

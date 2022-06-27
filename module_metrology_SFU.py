@@ -25,11 +25,11 @@ def read_cmm_file(filename):
     data_dictionary = {}
     temp_list = []
     for row in data[1:]:
-        label, feature_id, element, value = row[1:5]
+        name, element, value = row[1:4]
         print(row)
-        name = label
+        # name = label
         if element != "TP (3D)":
-            if name == 'Sensor_Origin' or name == 'Sensor_X_Axis' or re.search('^Sensor[0-9]+', name) :
+            if name == 'Sensor_Origin' or name == 'Sensor_Axis' or re.search('Sensor'+r"\d{1,3}", name) :
                 name = 'Sensor'
             if element == 'Y' :
                 temp_list.append(-(float(value)))
