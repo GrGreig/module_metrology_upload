@@ -41,11 +41,8 @@ def get_file_data():
     try:
         file = filedialog.askopenfilename(title = 'Select Data File')
         data_dict = mm.read_cmm_file(file)
-        print("cmm file can be read")
         data_dict = mm.tilt_correction(data_dict)
-        print("tilt correction done")
         date = mm.get_date(file)
-        print("get_date works")
 
         module_type = module_box.get(module_box.curselection()[0])
 

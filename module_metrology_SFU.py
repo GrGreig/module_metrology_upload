@@ -24,16 +24,16 @@ def read_cmm_file(filename):
         data = list(data)
     data_dictionary = {}
     temp_list = []
-    for row in data[6:]:
-        label, feature_id, element, value = row[1:5]
+    for row in data[1:]:
+        name, element, value = row[1:4]
         print(row)
-        name = label
-        if feature_id != "TP (3D)":
-            if name == 'Sensor_Origin' or name == 'Sensor_Axis' or re.search('Sensor'+r"\d{1,2}", name) :
+        # name = label
+        if element != "TP (3D)":
+            if name == 'Sensor_Origin' or name == 'Sensor_Axis' or re.search('Sensor'+r"\d{1,3}", name) :
                 name = 'Sensor'
-            if feature_id == 'Y' :
+            if element == 'Y' :
                 temp_list.append(-(float(value)))
-            elif feature_id == 'Z':
+            elif element == 'Z':
                 temp_list.append(float(value))
                 temp_entry = data_dictionary.get(name, [])
                 temp_entry.append(temp_list)

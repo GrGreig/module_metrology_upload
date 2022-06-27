@@ -14,7 +14,7 @@ PATH_TO_DATA = 'module_metrology_data/'
 PATH_TO_POSITION_FILES = 'metrology_position_files/'
 SITE_TYPE = 'EC'
 FLEX_THICKNESS = 0.270 #um (Endcap)
-PROGRAM_VERSION = 'v2'
+PROGRAM_VERSION = 'v1'
 GLUE_RANGE = (0.80, 0.160) #um
 X = 0
 Y = 1
@@ -24,7 +24,7 @@ ENTRY_Y = 20
 DATA_DICT = dict()
 HYBRID_GT_REGEX = '_R[0-5]H[0-1]_[0-9]+'
 PB_GT_REGEX = 'PB_[0-5]'
-SHIELD_REGEX = 'Shield'
+SHIELD_REGEX = 'Shield+'
 CAP_REGEX = 'C[1-8]'
 
 def clear_data():
