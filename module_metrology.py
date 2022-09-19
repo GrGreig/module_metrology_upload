@@ -25,22 +25,28 @@ def read_cmm_file(filename):
     data_dictionary = {}
     temp_list = []
     for row in data[1:]:
-        label, feature_id, element, value = row[1:5]
+        if len(row) == 4 :
+            name, element, value = row[1:4]
+        else :
+            name, feature_id, element, value = row[1:5]
         print(row)
-        name = label
-        if element != "TP (3D)":
-            if name == 'Sensor_Origin' or name == 'Sensor_X_Axis' or re.search('^Sensor[0-9]+', name) :
-                name = 'Sensor'
-            if element == 'Y' :
-                temp_list.append(-(float(value)))
-            elif element == 'Z':
-                temp_list.append(float(value))
-                temp_entry = data_dictionary.get(name, [])
-                temp_entry.append(temp_list)
-                data_dictionary[name] = temp_entry
-                temp_list = []
-            else:
-                temp_list.append(float(value))
+        name = name.upper()
+        if re.search("_[A-Z]$", name) :
+            name = name[0:-2]
+        if "SENSOR" in name or "SHIELD" in name:
+            name = name.capitalize()
+        if 'Sensor' in name :
+            name = 'Sensor'
+        if 'Y' in element :
+            temp_list.append(-(float(value))) #Y needs to be flipped for the desired co-ordinate system.
+        elif 'Z' in element:
+            temp_list.append(float(value))
+            temp_entry = data_dictionary.get(name, [])
+            temp_entry.append(temp_list)
+            data_dictionary[name] = temp_entry
+            temp_list = []
+        else:
+            temp_list.append(float(value))
     print(data_dictionary)
     return data_dictionary
 
@@ -70,7 +76,8 @@ def tilt_correction(data_dictionary):
     return data_dictionary
 
 def plot_data(data_dictionary, key):
-    """Produces a 3D plot of the data point cloud for the key of interest"""
+    """Produces a 3D plot of the data point cloud for the key of interest.
+       Also plots plane of best fit for sensor data."""
     data = np.array(data_dictionary.get(key))
     x = data[:,X]
     y = data[:,Y]
@@ -81,14 +88,12 @@ def plot_data(data_dictionary, key):
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
     if key == "Sensor":
+        xx, yy = np.meshgrid([min(x),max(x)],[min(y),max(y)])
         A = np.c_[x, y, np.ones(len(z))]
         C, _, _, _ = lstsq(A, z)
-        z_pred = []
-        for i in range(0,len(x)):
-            z_pred.append(C[0]*x[i] + C[1]*x[i] + C[2])
-        ax.plot_surface(X, Y, Z, rstride=1, cstride=1, alpha=0.2)
+        z_pred = C[0]*xx + C[1]*yy + C[2]
+        ax.plot_surface(xx, yy, z_pred, rstride=1, cstride=1, alpha=0.2)
     plt.show()
-
 
 
 def get_data_array(data_dictionary, key):
