@@ -60,12 +60,12 @@ def get_glue_thickness_dictionary(data_dictionary):
     """Generates the glue thickness dictionary.
     Module object can be either 'Power Board' or 'Hybrid' """
     glue_dict = dict()
-    for key, value in data_dictionary.items():
+    for key, values in data_dictionary.items():
         if re.search(HYBRID_GT_REGEX,key) :
-            glue_dict[key] = value[0]
-    for key, value in data_dictionary.items():
+            glue_dict[key] = values
+    for key, values in data_dictionary.items():
         if re.search(PB_GT_REGEX,key) :
-            glue_dict[key] = value[0]
+            glue_dict[key] = values
     print(glue_dict)
     return sort_dict(glue_dict)
     
@@ -105,15 +105,15 @@ def get_file_data():
         date = mm.get_date(file)
 
         module_type = module_box.get(module_box.curselection()[0])
-        print(1)
+        print("Data Collected")
         position_dict = get_distance_dict(data_dict, module_type)
-        print(2)
+        print("Distances Parsed")
         cap_dict = get_capacitor_heights(data_dict)
-        print(3)
+        print("Capacitor Heights Collected")
         glue_dict = get_glue_thickness_dictionary(data_dict)
-        print(4)
+        print("Glue thicknesses data resolved.")
     except:
-        output_text.set("Error in processing file. Likely an invalid file type.")
+        output_text.set("Error in processing file. Likely an invalid file type or wrong module type.")
         return
 
     DATA_DICT['DATE'] = date
@@ -141,7 +141,7 @@ def save_data():
     file_prefix = module_ref + "_" + module_type + '_MODULE_METROLOGY_'
     path_to_save = PATH_TO_DATA + 'metrology_data/'
     full_path = mm.get_file_output(file_prefix, path_to_save, int(run_number))
-    
+    print(DATA_DICT)
     #Open the data file and write to it.
     file = open(full_path,'w+')
     file.write('#---Header\n')
@@ -162,8 +162,9 @@ def save_data():
     file.write('#Location\tType\tX[mm]\tY[mm]\tZ[mm]\n')
     for point in DATA_DICT['SENSOR']:
         file.write(f'Sensor\t1\t{point[X]:0.4f}\t{point[Y]:0.4f}\t{point[Z]:0.4f}\n')
-    for key, point in DATA_DICT['GLUE_HEIGHTS'].items() :
-        file.write(f'{key}\t2\t{point[X]:0.4f}\t{point[Y]:0.4f}\t{point[Z]:0.4f}\n')
+    for key, points in DATA_DICT['GLUE_HEIGHTS'].items() :
+        for point in points:
+            file.write(f'{key}\t2\t{point[X]:0.4f}\t{point[Y]:0.4f}\t{point[Z]:0.4f}\n')
     if DATA_DICT['CAP'] != {} and DATA_DICT['SHIELD'] != {} :
         file.write('#---Other heights:\n')
         file.write('#Location\tType\tX[mm]\tY[mm]\tZ[mm]\n')

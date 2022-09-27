@@ -227,19 +227,13 @@ def save_data():
         testRun = result['testRun']['id']
         file_path = DATA_DICT['results']['FILE']
         file_name = os.path.basename(file_path)
-        dataforuploadparameter={
-            "testRun": testRun,
-            "parameter": "FILE"
-        }
         dataforuploadattachment={
                 "testRun": testRun,
                 "type": "file",
                 "title": file_name, 
                 "description": "Automatic Attachment of Original Data File", 
             }
-        parameter = {"data" : open(file_path, 'rb')}
         attachment = {'data': (file_name, open(file_path, 'rb'), 'text')}
-        client.post("createBinaryTestRunParameter", data = dataforuploadparameter, files = parameter)
         client.post("createTestRunAttachment", data = dataforuploadattachment, files = attachment)
         output_text.set("Upload of test and attachment completed.")
  
