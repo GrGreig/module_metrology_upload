@@ -29,7 +29,6 @@ def read_cmm_file(filename):
             name, element, value = row[1:4]
         else :
             name, feature_id, element, value = row[1:5]
-        print(row)
         name = name.upper()
         if re.search("_[A-Z]$", name) :
             name = name[0:-2]
@@ -54,7 +53,7 @@ def get_date(filename):
     """Gets the date of a file in ISO8601 format"""
     creation_time = os.path.getctime(filename) 
     creation_time = datetime.utcfromtimestamp(creation_time)
-    return creation_time.strftime('%Y-%m-%dT%H:%M:%S.%f%ZZ')
+    return creation_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
 
 def tilt_correction(data_dictionary):
     """Correct the tilt of the data using the vacuumed down surface of the sensor as the Z=0 plane.
