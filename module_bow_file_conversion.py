@@ -6,8 +6,8 @@ from tkinter import filedialog
 
 X_LIMIT = 0.1 #mm
 Y_LIMIT = 0.3 #mm
-INSTITUTE = 'TRIUMF'
-INSTRUMENT = "Mitutoyo_CMM"
+INSTITUTE = 'SFU'
+INSTRUMENT = "Smartscope_Flash_302"
 PATH_TO_DATA = 'module_metrology_data/'
 PATH_TO_POSITION_FILES = 'metrology_position_files/'
 SITE_TYPE = 'EC'
@@ -75,11 +75,11 @@ def save_data():
     file.write('Date: ' + DATA_DICT['DATE'] + '\n')
     file.write('Institute: ' + INSTITUTE + '\n')
     file.write('Operator: ' + operator_display.get() + '\n')
-    file.write('Instrument Type: ' + INSTRUMENT + '\n')
+    file.write('Instrument type: ' + INSTRUMENT + '\n')
     file.write('Run Number: ' + str(run_number) + '\n')
     file.write('Measurement program version: ' + PROGRAM_VERSION + '\n')
-    file.write('#---Positions\n')
-    file.write('#Bow\tX[mm]\tY[mm]\tZ[mm]\n')
+    file.write('#---Bow\n')
+    file.write('#Location\tX [mm]\tY [mm]\tZ [mm]\n')
     for point in DATA_DICT['SENSOR'] :
         file.write(f'Sensor\t{point[X]:0.4f}\t{point[Y]:0.4f}\t{point[Z]:0.4f}\n')
     file.close()
