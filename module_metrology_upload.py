@@ -13,10 +13,10 @@ from tkinter.constants import DISABLED, NORMAL
 from tkinter import END
 
 # Institute Specific Constants - MODIFY THESE!
-INSTITUTE = 'TRIUMF'
-INSTRUMENT = "Mitutoyo_CMM"
+INSTITUTE = 'SFU'
+INSTRUMENT = "Smartscope Flash 302"
 SITE_TYPE = 'EC'
-HYBRID_FLEX_THICKNESS = 270 #um (Endcap)
+HYBRID_FLEX_THICKNESS = 250 #um (Endcap)
 PB_FLEX_THICKNESS = 270 #um (Endcap)
 MAX_SHIELD_HEIGHT = 5710 #um (Endcap)
 
