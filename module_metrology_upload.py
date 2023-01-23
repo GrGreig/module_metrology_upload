@@ -13,8 +13,8 @@ from tkinter.constants import DISABLED, NORMAL
 from tkinter import END
 
 # Institute Specific Constants - MODIFY THESE!
-INSTITUTE = 'SFU'
-INSTRUMENT = "Smartscope Flash 302"
+INSTITUTE = 'TRIUMF'
+INSTRUMENT = "Mitutoyo CMM"
 SITE_TYPE = 'EC'
 HYBRID_FLEX_THICKNESS = 250 #um (Endcap)
 PB_FLEX_THICKNESS = 270 #um (Endcap)
@@ -42,7 +42,7 @@ def get_comp_dict(module_type):
     """Gets the postision dictionary to determine flex offsets."""
     file_name = PATH_TO_POSITION_FILES + module_type + "_positions.csv"
     with open(file_name) as csv_file :
-        reader = csv.reader(csv_file, delimiter = ',')  
+        reader = csv.reader(csv_file, delimiter = ',')
         positions = list(reader)
     comparison_dict = dict()
     for row in positions[1:]:
@@ -63,7 +63,7 @@ def print_format(data):
     else:
         output = str(data)
     return output
-    
+
 
 def get_metrology_results(lines):
     """Creates the results dictionary for upload to the database."""
@@ -84,7 +84,7 @@ def get_metrology_results(lines):
             pb_dict[name] = [round((float(x) - x_expected)*1000), round((float(y) - y_expected)*1000)]
         index += 1
         line_data = lines[index]
-    
+
     # Get rest of data and correct tilt
     raw_data_dict = dict()
     for line in lines[index:] :
@@ -101,14 +101,14 @@ def get_metrology_results(lines):
     pb_gt_dict = dict()
     shield_height = None
     for key, values in data_dict.items() :
-        z_values = [row[Z] for row in values]
+        z_values = [round(row[Z], 4) for row in values]
         if re.search(CAP_REGEX, key) :
             cap_dict[key] = round(sum(z_values)/len(z_values)*1000)
         elif re.search(HYBRID_GT_REGEX, key) :
             hybrid_gt_dict[key] = round(sum(np.array(z_values)*1000 - HYBRID_FLEX_THICKNESS)/len(z_values))
         elif re.search(PB_GT_REGEX, key) :
             pb_gt_dict[key] = round(sum(np.array(z_values)*1000 - PB_FLEX_THICKNESS)/len(z_values))
-        elif re.search(SHIELD_REGEX, key) :                                   
+        elif re.search(SHIELD_REGEX, key) :
             shield_height = round(max(z_values)*1000)
 
     if not cap_dict :
@@ -150,22 +150,23 @@ def test_passed():
     position_y_check =  -Y_LIMIT < np.abs(np.array(y_positions)).all() < Y_LIMIT
     if not position_x_check or not position_y_check:
         output += "Failure - Position exceeds tolerance in one or more dimensions.\n"
-        
-    
+
+
     # Check the hybrid glue thickness
     hybrid_gts = []
     for height in DATA_DICT['results']['HYBRID_GLUE_THICKNESS'].values():
         hybrid_gts.append(height)
-    hybrid_gt_check = GLUE_RANGE[0] < np.array(hybrid_gts).all() < GLUE_RANGE[1]
+    # hybrid_gt_check = GLUE_RANGE[0] < np.array(hybrid_gts).all() < GLUE_RANGE[1]
+    hybrid_gt_check = all(GLUE_RANGE[0] < gt < GLUE_RANGE[1] for gt in np.array(hybrid_gts))
     if not hybrid_gt_check:
         output += "Failure - Hybrid glue thickness exceeds tolerance.\n"
-    
+
     # Then the powerboard
     if DATA_DICT['results']['PB_GLUE_THICKNESS'] is not None :
         pb_gts = []
         for height in DATA_DICT['results']['PB_GLUE_THICKNESS'].values():
             pb_gts.append(height)
-        pb_gt_check = GLUE_RANGE[0] < np.array(pb_gts).all() < GLUE_RANGE[1]
+        pb_gt_check = all(GLUE_RANGE[0] < gt < GLUE_RANGE[1] for gt in np.array(pb_gts))
         if not pb_gt_check:
             output += "Failure - PB glue thickness exceeds tolerance.\n"
     else:
