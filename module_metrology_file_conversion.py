@@ -82,12 +82,12 @@ def get_distance_dict(data_dictionary, module_type):
     for key points of interest"""
     filename = PATH_TO_POSITION_FILES + module_type + '_positions.csv'
     with open(filename, mode='r') as csv_file:
-        reader = csv.reader(csv_file, delimiter = ',')  
+        reader = csv.reader(csv_file, delimiter = ',')
         data = list(reader)
         position_dict = dict()
         for row in data[1:]:
             point = data_dictionary.get(row[0],None)[0]
-            if point != None : 
+            if point != None:
                 position_dict[row[0]] = [point[X],point[Y]]
     return sort_dict(position_dict)
 
@@ -95,7 +95,7 @@ def get_file_data():
     """Get the data from a file using the search function and format it into the standard JSON dictionary."""
 
     if serial_number.get() == "" or run_num.get() == "" or module_box.curselection() == () :
-        output_text.set('Please ensure all mandatory values have been entered and a data file has been choosen. Then try again.')
+        output_text.set('Please ensure all mandatory values have been entered and a data file has been chosen. Then try again.')
         return 
 
     try:
@@ -106,7 +106,10 @@ def get_file_data():
 
         module_type = module_box.get(module_box.curselection()[0])
         print("Data Collected")
-        position_dict = get_distance_dict(data_dict, module_type)
+        try:
+            position_dict = get_distance_dict(data_dict, module_type)
+        except:
+            print("One or more fiducial locations are missing")
         print("Distances Parsed")
         cap_dict = get_capacitor_heights(data_dict)
         print("Capacitor Heights Collected")
@@ -121,9 +124,11 @@ def get_file_data():
     DATA_DICT['POSITIONS'] = position_dict
     DATA_DICT['GLUE_HEIGHTS'] = glue_dict
     DATA_DICT['CAP'] = cap_dict
-    DATA_DICT["SHIELD"] = data_dict['Shield']
+    try:
+        DATA_DICT["SHIELD"] = data_dict['Shield']
+    except:
+        print("There are no shieldbox points in raw data file")
     DATA_DICT['SENSOR'] = data_dict['Sensor']
-
 
     output_text.set("File found and data parsed. Can now save to standard file format.")
 

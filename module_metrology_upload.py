@@ -6,6 +6,7 @@ import os
 import itkdb
 import numpy as np
 import module_metrology as mm
+import matplotlib.pyplot as plt
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import scrolledtext
@@ -94,7 +95,7 @@ def get_metrology_results(lines):
             temp_list.append([float(x),float(y),float(z)])
             raw_data_dict[name] = temp_list
     data_dict = mm.tilt_correction(raw_data_dict)
-    print(data_dict)
+    # print(data_dict)
     #Get rest of results
     cap_dict = dict()
     hybrid_gt_dict = dict()
@@ -127,8 +128,35 @@ def get_metrology_results(lines):
     results["HYBRID_GLUE_THICKNESS"] = hybrid_gt_dict
     results["SHIELDBOX_HEIGHT"] = shield_height
     results["FILE"] = ""
-    print()
     print(results)
+
+    plt.figure(1)
+    fig, ax = plt.subplots()
+    ax.plot(cap_dict.keys(), cap_dict.values(), 'k-', label = "glue height")
+    ax.plot(cap_dict.keys(), np.full((len(cap_dict), 1), GLUE_RANGE[0]), 'r--', label = "min")
+    ax.plot(cap_dict.keys(), np.full((len(cap_dict), 1), GLUE_RANGE[1]), 'r--', label = "max")
+    # plt.plot([1, 2, 3, 4])
+    plt.title("Capacitor Package Heights")
+    plt.ylabel("Glue Thickness [um]")
+
+    plt.figure(2)
+    fig1, ax = plt.subplots()
+    ax.plot(hybrid_gt_dict.keys(), hybrid_gt_dict.values(), 'k-', label="glue height")
+    ax.plot(hybrid_gt_dict.keys(), np.full((len(hybrid_gt_dict), 1), GLUE_RANGE[0]), 'r--', label="min")
+    ax.plot(hybrid_gt_dict.keys(), np.full((len(hybrid_gt_dict), 1), GLUE_RANGE[1]), 'r--', label="max")
+    # plt.plot([1, 2, 3, 4])
+    plt.title("Hybrid Glue Heights")
+    plt.ylabel("Glue Thickness [um]")
+
+    plt.figure(3)
+    fig2, ax = plt.subplots()
+    ax.plot(pb_gt_dict.keys(), pb_gt_dict.values(), 'k-', label="glue height")
+    ax.plot(pb_gt_dict.keys(), np.full((len(pb_gt_dict), 1), GLUE_RANGE[0]), 'r--', label="min")
+    ax.plot(pb_gt_dict.keys(), np.full((len(pb_gt_dict), 1), GLUE_RANGE[1]), 'r--', label="max")
+    # plt.plot([1, 2, 3, 4])
+    plt.title("Powerboard Glue Heights")
+    plt.ylabel("Glue Thickness [um]")
+    plt.show()
     return results
 
 def test_passed():
@@ -332,7 +360,6 @@ def save_data():
         attachment = {'data': (file_name, open(file_path, 'rb'), 'text')}
         client.post("createTestRunAttachment", data = dataforuploadattachment, files = attachment)
         output_text.set("Upload of test and attachment completed.")
- 
 
 # GUI Definition
 root = tk.Tk()
